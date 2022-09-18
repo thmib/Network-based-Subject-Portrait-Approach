@@ -1,1 +1,1 @@
-python scr/ComprehensiveNetwork.py data/example.csv > ComprehensiveNetwork.tsv
+python scr/ComprehensiveNetwork.py data/example.csv > ComprehensiveNetwork.tsv # the first two column is snp name and is followed by information gain and mutual information.
