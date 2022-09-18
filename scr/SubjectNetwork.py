@@ -7,6 +7,7 @@ import multiprocessing
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import KFold
+import sys
 
 ### Parameters
 add_data = "dataset.txt"
@@ -62,7 +63,7 @@ def main():
             
 if __name__ == "__main__":
     #### Parameters
-    add_data = "DATA_Features.tsv"
-    add_edgesSelection = "DATA_EdgeSelection.tsv" # no header
+    add_data = sys.argv[1] 
+    add_edgesSelection = sys.argv[2] # no header
     num_of_folds = 5
     main()

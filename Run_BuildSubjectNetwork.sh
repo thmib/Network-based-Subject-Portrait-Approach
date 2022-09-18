@@ -1,0 +1,1 @@
+python scr/SubjectNetwork.py data/example2.tsv data/example_edgelist.csv
