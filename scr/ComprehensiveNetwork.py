@@ -32,7 +32,7 @@ def main():
     data = pd.read_csv(add_dataset)
     labels, snps, data = processDF(data)
 
-    print('f1_i','f2_i','ig','mutual',sep='\t')
+    # print('f1_i','f2_i','ig','mutual',sep='\t')
     pool = multiprocessing.Pool(multiprocessing.cpu_count())
     edges = [[i,j]for i in range(0, len(snps)-1) for j in range(i+1, len(snps))]
     #pool = multiprocessing.Pool(1)

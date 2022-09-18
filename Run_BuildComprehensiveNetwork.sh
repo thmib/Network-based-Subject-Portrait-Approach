@@ -1,0 +1,1 @@
+python scr/ComprehensiveNetwork.py data/example.csv > ComprehensiveNetwork.tsv
