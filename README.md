@@ -19,4 +19,11 @@ Sample Run Command:
 bash Run_BuildSubjectNetwork.sh
 ```
 This command will produce a 5-fold cross-validation dataset with the transformed features. **SubjectNetwork.py** contains two parameters with the first parameter indicating the dataset and the second paramter indicating the edge list of the comprehensive network. 
-
+## High-performance computation
+Although the first step has been parallelized using the multiprocessing package, if the dataset includes hundreds of thousands of SNPs, it is necessary to use high-performance computing to get the results in time. We propose to achieve high-performance computing by data chunking.
+The specific steps are.
+1. partitioning the high-dimensional data into independent sub-datas by SNP, each sub-data including a less number of SNPs and labels.
+2. evaluate all SNP interactions using **ComprehensiveNetwork.py** for each sub-data.
+3. evaluate the feature interactions between any pair of sub-datas using **/scr/ComprehensiveNetwork_Bipartisan.py**.
+4. merge.
+Note that the merged data can be very large. It is recommended that the weakest SNP interactions are removed before merging. This would reduce the overall data size by several orders of magnitude.
