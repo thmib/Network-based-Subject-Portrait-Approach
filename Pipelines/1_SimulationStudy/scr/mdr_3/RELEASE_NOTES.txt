@@ -1,0 +1,317 @@
+MDR 3.0.2 (build 2) 2013/02/20 15:27 
+
+Multifactor Dimensionality Reduction
+You can find  MDR at http://sourceforge.net/projects/mdr/
+
+MDR is written in Java and requires java to be installed. See: http://www.java.com
+
+If your data file is not abnormally large, start MDR by double clicking on the mdr.jar icon. 
+
+If you need additional memory you can 'tell' Java how much memory to use by using the -Xmx parameter when invoking java.
+You can use 'm' of 'g' for megabytes or gigabytes respectively. Note there is no space between the 'x' and the number.
+
+In a shell window (or 'cmd' on Windows), change to the directory containing mdr.jar and start MDR by
+typing something like this:
+
+Example:
+java -Xmx500m -jar mdr.jar
+
+OR
+
+java -Xmx1g -jar mdr.jar
+
+Note: these instructions are for running MDR in graphical user interface (GUI) mode. Power users
+may wish to use the 'batch' mode or use the included python scripts for some common tasks.
+See the included 'MDR_command_line_help.txt' for more details.
+
+The java source code for this project is most easily gotten via the SourceForge CVS repository
+  as described here: https://sourceforge.net/scm/?type=cvs&group_id=131001
+  The CVS repository includes all needed external libraries and an ant buildfile and Eclipse project
+  file so this is the recommended way to examine the source. Additionally the java source files are
+  included in the .jar file but this is not a great way to examine them. 
+
+----------------------- Change list -----------------------------------------------
+3.02.2 2013-02-20
+fixed bug where new batch/command line parameters such as '-discrete_significance_metric' 
+  were left disabled for non-experimental use.
+
+3.0.1 2013-02-15
+fixed bug printing permutation report when no originalAnalysis results passed in
+print permutation results with higher precision so permutations_on_cluster.py can
+ match float comparison results
+fix bug looking up top model annotation info
+enhanced permutations_on_cluster.py to match output of running permutations on
+  a single machine 
+show cv results even on a forced search since now could be multiple or with wildcards
+change most text output from space separated to tab delimited
+change summary table header from testing to overall when no cross validation
+changed large_file_on_cluster to only do CV=1.
+
+3.0 2013-02-08
+Changed Top Models to show Overall Balanced accuracy rather than training. This 
+  allows huge speed up when doing cross-validation since only the top models
+  need to be cross-validated. 
+Added support for quantitative endpoints (Q-MDR)
+Added Network tab with network analysis methods
+Added support for wildcards in forced searches so you can see the
+  best model which includes specified attribute(s)
+Added much more powerful API in org.epistasis.mdr.api.MDRExecutor
+Added filters multiSURF and multiSURFnTuRF
+Added elapsed/estimated timer to progress bars
+Extended the 'paired' analysis to also deal with triplets (e.g. case, control, control data). If a repeating pattern of status values
+  is detected then the 'matched' checkbox (formerly called 'paired') will be enabled.
+Added new filter type: the ability to pass in a file. It will read in
+  attributes from the file and filter the dataset to only contain those columns.
+Fixed bugs saving EPS graphs, saving text of network graphs
+Changed default Y axis of landscape line charts to dynamically set range rather than being set to 0 and 1
+Added warning upon data load if missing data encountered
+Improved feedback about mismatches between expert knowledge score file and dataset attribute names.
+Added new column to the Expert Knowledge 'View Scores' table. New column is 'current probability' and it updates as EDA searches update.
+Bug fixes...
+
+2.0 beta 8.4 2011-04-08
+Fixed bug about type of units returned by TuRF. Explanation: SURFnTuRF, SURFStarnTuRF use zTransformed values. When they were
+  implemented in 2.0 beta 4 2009-06-04, TuRF was also changed to use zTransformed scores. The difference is not great but
+  the TuRF algorithm is documented as returning ReliefF scores so it is now being restored to return ReliefF scores.
+Fixed bug in batch mode where landscape table was missing a line break between table header and first row.
+Fixed bug in batch mode permutation output. The boundary p-values have been incorrect. The easiest way to see that
+  this was wrong was to notice that at less significant p-values, the stated balanced accuracy was higher which
+  makes no sense.
+Added ability to run analysis on more than one dataset in batch mode
+Added warning dialogs after loading an expert knowledge file if there were unmatched attributes.
+Added -all_models_outfile option to console version. If a filename passed in, MDR will output all models looked at with
+  their training and testing balanced accuracy. Unlike landscape and Top Models this is written continuously rather than
+  waiting until the end and therefore doesn't require massive amounts of memory.
+Updated BareBonesBrowserLaunch code to v3.1 as described here: http://www.centerkey.com/java/browser/
+
+
+2.0 beta 8.3 2010-10-22
+Added support for batch mode to accept urls for dataset filenames
+Added simple API to do an analysis. org.epistasis.combinatoric.mdr.MDRExternalAPI
+In batch mode, dataset can be a local file path or a url.
+Fixed nullPointerException when reading in a saved analysis before any analysis had been run.
+
+2.0 beta 8.2 2010-08-18
+Bug fix -- filtering in the command line was broken due to a parsing error
+  
+2.0 beta 8.1 2010-06-07
+Bug fix -- MDR in batch mode was giving an error: Caught an exception in Main() method:
+  java.lang.IllegalArgumentException: OptionSet: unknown key: top_models_landscape_outfile
+Bug fix -- fishers_threshold was not being used in batch mode -- user input was ignored
+Added a new python script 'large_file_on_cluster.py' which can be used to run a large mdr analysis across many 
+  different processes on a cluster.
+  
+2.0 beta 8 2010-04-16
+Added new feature to allow control over the criteria to decide if a cell is ambiguous. Formerly only tie cells
+  were considered ambiguous. Now you can adjust a threshold value for a Fisher's exact test which is used to 
+  determine if the difference in the case control ratios in a cell is significant. 'Tie cells' renamed to  
+  'Ambiguous cell assignment' and a new choice added 'Unassigned'. When a cell is unassigned the balanced accuracy
+  fitness is slightly downgraded to reflect that only some of the dataset rows could be predicted (i.e. coverage).
+  The revised formula is (Balanced accuracy - 0.5) * sqrt(coverage) + 0.5. When coverage is 1, this is identical to 
+  balanced accuracy. When this has been used, the summary table column headings will say 'Adj. Bal. Acc' instead of just
+  plain 'Bal. Acc.'.
+Added a new column 'Ratio' to the 'Best Model' text output. When a dataset has equal numbers of case/control (balanced)
+  it is easy to understand why a combination is predicted either case or control. However, in an unbalanced dataset
+  this is less obvious so the ratio column can be compared to the 'Ratio' in the 'Datafile Information' section.
+  NOTE: the layout of this table has changed slightly and the column labels are dynamic based on the dataset column names.
+For landscape panels such as from Filter results or Top Models, add a header row to identify column contents
+  in the raw text viewing mode. Modified Y Axis labels from 'Accuracy' to 'Training Accuracy'
+Change the way average training fitness is calculated for tracking top models. It used to average the fitnesses of the
+	intervals. The way it is done in other ares is to create an aggregate confusion matrix and calculate the average of
+	that -- perhaps we should call this the 'aggregate training average' rather than the average?
+	When CVC is perfect the value shown in the summary table and top models will now match. When CVC is not perfect,
+	the value in top models will tend to be lower than the summary table value. This is because the summary table is
+	the aggregate of all the CV winning models, not of the chosen best model.
+	In addition, the top 'Top Model' can be different than the chosen best model. This is because 'Top Models' are sorted
+	by aggregate training averages of the model but the best model is picked by the best CV count, with ties broken by best
+	aggregate of the intervals in the winning CV intervals.
+
+2.0 beta 7.2 2010-03-02
+Allow permutations to be less than 100
+Added a python script 'permutations_on_cluster.py' which can be used to distribute permutation testing among many
+	mdr jobs and will automatically collate the results and calculate significance.
+  
+2.0 beta 7.1 2010-02-26
+Fixed bad bug in permutation tests involving explicitTestOfInteraction. As run progressed, the dataset became increasingly homogenized so
+  that eventually every row was identical. All results from explicitTestOfInteraction permutation results in mdr beta 7 must be discarded and re-run.
+Made more robust if an error occurs while trying to load a saved analysis. Made sure that all buttons making use of a dataset or an analysis
+  are disabled after a failure. Also asked user if they might have meant to load a data file instead of an analysis.
+Gui improvement: if a dataset's row values do not alternate in the status/class column, paired analysis is not logical so disable the 'Paired Analysis' checkbox
+  in the configuration tab.
+  
+2.0 beta 7 2010-01-20
+Fixed bug when selecting in landscape, top models, or when showing filtered attributes. Also improved tooltip.
+Minor new feature: in landscape show attribute names if showing only one level of attribute combinations
+New method of storing attribute count data improved overall speed by about 25%.
+Added new feature: batch console mode support for permutation testing of exhaustive search (this is the default search type).
+  Two new parameters for permutations: -permutations=<# permutations> and -permute_with_explicit_test_of_interaction-<true|false> (defaults to false)\
+  Permutation tests run a normal analysis and then repeat the analysis multiple while randomizing the dataset. If minimal_output is true then you will see
+  only a summary table of results. If it is false then you will also see the models returned for every permutation. Since the permutation is dependent on
+  the random seed, by passing different random seeds, one could distribute permutation testing across many different copies of mdr (cluster) and then
+  collate the results.
+  Note that permutation results are affected by the minAttr and maxAttr parameters -- i.e. how many levels or different numbers of attributes MDR uses.
+  This is because for each permutation, we keep track of only one model from all attribute levels tested. So if you had 2-way and 3-way models it
+  would pick the better among the two -- better is defined as best testing score, if tied then best CVC, if still tied then smallest level (2-way better
+  than 3-way due to parsimony).
+Added new feature: covariate adjustment for both gui and batch console. This will remove main affects caused by
+  an attribute by modifying the dataset to remove the main affect. Currently, the modification is to add rows
+  such that all genotype squares for the chosen attribute will show equal numbers of case and controls, thereby eliminating any affect.
+Fixed bug in calculating averages shown when cross-validation partitions found more than just one model.
+  There are several methods as to what the averages could show. 1) Show the average of the best partitions found (mdr default prior to 2.0 beta 2, March 2009)
+  2) Show the averages of the chosen model. 3) Show the average of only the partitions where the best model was also the best in that partition.
+  In the case where the same model was the best for all CV intervals, all methods give identical results.
+  However, when the CVC count is not perfect (i.e. more than one model one at least one CV partition) the three methods give
+  varying results.For example, if model X1 was
+  the best model for 8 of 10 CV partitions and X7 was the best for 2 of 10, method # would be to show the average of 8 X2 and 2 X7 partition results;
+  or method #2 would average all of X1's 10 partitions, including the two that did not win their CV partition; or method #3, show the average of the 8 X1
+  partitions that were also the best  model for their partition.
+  The bug was that prior MDR behavior was method #1, but that in 2.0 beta 2 in March 2009, when implementing Top Models I
+  accidentally changed the behavior to method #3. Note this only affects models where CVC was not perfect. In cases where the CV is
+  very good, say 9 of 10, the effect of the bug would be very small and would tend to cause the testing accuracy to be higher
+  (since the non-best model probably had worse testing than the best model so not including it in the average would raise the average).
+  Since users are instructed to use a 'forced analysis' to get the 'true' averages (equivalent to result in method #2) before proceeding
+  to permutation testing, and the bug did not affect this result, the bug should not be consequential.   
+Fix bug in attribute construction where no attribute would be constructed. A null pointer
+  exception was occurring (visible if a console window open). Bug occurred when the constructed
+  attribute had a tie for number of affected/unaffected. Changed code to use tiePriority.
+Changed use of file choosers so that it will for file loading and saving the last used directory (for that session)
+  will be used
+Changed way to warn user of low memory. Previously, we would automatically warn that they might need more memory
+    if they started mdr with < 100 mb. Now I reserve a slice of memory and warn the user if the jvm machine has allocated
+    the maximum memory and our 'sentinel' memory was taken.
+Fixed minor bug where MDR application was still running for a while after closing the main window.
+
+2.0 beta 6 2009-07-20
+Added SURF*nTuRF
+Stopped disabling CV spinner when forced search type since still relevant
+Sped up SURF and SURF* by only evaluating neighbor combinations once. This will change the
+  scores generated for these algorithms.
+Convert scores to z-scores during all versions of TuRF variants. C implementations on which published papers
+  report always were converting to z-scores. Didn't affect ReliefF much but important for SURF.
+
+2.0 beta 5 2009-07-17
+Added SURF*
+Fixed crash when no cross-validation (CV=1)
+Added a method to improve filtering on unbalanced datasets. Basically, we oversample from the
+smaller class
+
+2.0 beta 4 2009-06-04
+Added SURF
+Added SURFnTURF
+Added support for 'minimal_output' in console when filtering. This will output only the
+  attributes and their scores to standard out. When minimal_output=true the output filename
+  for the filtered dataset becomes optional and the filtered dataset is written only when
+  the name is supplied
+Fixed bugs in EDA Linear/Rank
+disable cross validation controls when searchMethod set to Forced
+
+2.0 beta 3.1 2009-03-30
+Significantly improved data loading by speeding up and reducing peak memory usage. Was able to load
+  a dataset with 500,000 attributes and 1000 instances in a few minutes with java set to 2g ram.
+Improved display performance when using remote X windows. X forwards drawing commands not images so in
+  the case of large reliefF plots (> 50K attributes) it was extremely slow. Switched to image buffering.
+fixed a problem where AttributeConstruction panel was sometimes empty
+When showing the summary table after a forced search, removed the CVC column since it will always be all/all
+  and therefore may mistakenly give someone the idea that the model was cross validated
+Changed default ant build task to clean and jar to ensure only latest code used.
+Changed EDA search number of updates increment from 1 to 50
+
+2.0 beta 2 2009-03-21
+Improved reliefF and TURF filtering. Now faster and floating point values better (e.g. .025 instead of .024999999) 
+Reverted the first change from 2.0 beta 1 because it changed results without adding value
+Warn user if java has less than 100mb of RAM
+Fixed bug reloading analysis containing filtered data
+Slight changed text output for batch mdr console and gui mdr Best Model and CV Results for readability
+WARNING -- change to text output may affect parsing of batch mdr results!
+Fixed bug in calculating Cross validation consistency for Random and EDA searches. The code to
+  determine if the same attribute combination was found would not recognize X1,X8 as equal to X8,X1
+Made parsing of forced attributes looser to allow various common delimiters and whitespace
+If forced attributes incorrect, show warning dialog when analysis run is attempted
+Improved error messages that occur when reading data files.
+Added new feature: Top Models. For each attribute level, this will track the n best
+  models where n is a user supplied number from a spinner on the configuration tab. This
+  was added because 'compute landscape' can involve thousands or even millions of models
+  and can cause mdr to run out of memory.
+Tried to prevent 'compute landscape' from killing mdr with out of memory. If you check
+  'compute landscape' but nothing is shown then we probably ran out of memory and threw
+  away the landscape.
+
+
+2.0 beta 1 2009-01-29
+Changed the way random number generator was initialized. This makes the results differ from MDR 2.0 alpha, but not significantly -- at the same level
+  that changing the random seed changes results. 
+Removed (for now) 'Unknown' as a tie priority choice since it is not clear how instances marked as 'Unknown' should affect
+balanced accuracy.
+
+Added 'Verbose' checkbox to 'Best Model' and 'CV Results' tabs. If checked, shows true positive, true negative,
+false positive, false negative, precision, and coverage. For now coverage will always be 100%
+since we took out tie=Unknown. it is still interesting because it shows how the numbers of instances used for training and
+testing.
+
+Enhanced 'Forced attribute' to look for uppercase or lowercase labels before rejecting an attribute as unknown.
+
+Fixed bug in reading back a saved 'random' analysis search
+
+Added progress bar during loading of datasets and saved analyses.
+
+2.0 alpha 2
+Fixed bug where when an analysis was loaded, if you ran a new analysis, the best model and if-then-rules would not be changed.
+
+Fixed bug saving tie status = UNKNOWN. It would always be saved as 'Affected' instead of 'Unknown'.
+
+Fixed behavior when tie priority set to UNKNOWN. We used to ignore this setting and set tie cells to affected.
+We now set the cell status to unknown. This brings up the issue of need to indicate to user what
+percent of rows the balanced accuracy score was based on since many rows may get classified as unknown which
+is not reflected in the balanced accuracy.
+
+Fixed calculation of testing accuracy for genotypes which were encountered during testing which had not been seen in training.
+Old code used to ignore these cells. New code treats these counts as tie cells and assigns the cell status like any other tie.
+This will only affect smaller datasets and/or high cross-validation and/or many attributes which
+can result in empty cells. In these cases, if tie priority is other than UNKNOWN, the new behavior
+will change testing accuracy since we are now guessing about a cell which we used to just skip over.
+  
+2.0 alpha 2008-09-17
+Added preliminary version of a simple estimation of distribution
+algorithm (EDA) that assigns and updates probabilities to SNPs from the quality of the models
+the SNPs find themselves in and/or the expert knowledge you provide. These probabilities are
+used to pick SNPs for MDR models.
+
+1.2.5 2008-08-08
+Fix attribute construction bug. The bug also occurred when running with many levels. If the number of combinations of
+the attributes exceeded the number of rows then the code would switch from a dense matrix to a sparse matrix. The bug 
+was in the filling up of the sparse matrix and the result was we would get a null pointer exception and the attribute
+would silently not be created. 
+
+Fixed a similar bug when reading back a saved analysis file: need to use same logic as buildCounts to decide whether
+to use DenseMatrix or SparseMatrix.
+
+1.2.4 2008-07-18
+Fix saved analysis output bug. In the '@results' section for each model, where the training and
+testing confusion matrix are output for each cross validation test, the testing was incorrect --
+it was the training confusion matrix repeated rather than the testing matrix. The averages in
+the line with 'AvgTrain' were correct so the overall training and testing accuracies were still
+available.
+
+Fix bug where loading an analysis and then re-saving it would cause a null pointer exception.
+Simplest fix, although not ideal, was to disable save analysis when an old analysis is loaded.
+If a new analysis is run, then the 'Save Analysis' button will be enabled as usual. If a copy
+of an existing analysis is needed, it can be done outside of MDR.
+
+1.2.3 2008-07-07
+Fix inadvertent change to dataset loading that broke ability to read space delimited files
+
+1.2.2 2008-06-30
+Does a better job opening files with thousands of attributes.
+Changed file loading so can handle datasets with a larger number of attributes.
+Added a memory status area
+Remember: to run MDR with more memory (1 gigabyte in this example) start with: java -Xmx1024m -jar mdr.jar
+
+1.2.1
+Removed the Sign test column from the summary table results.
+Fixed a bug whereby saved analyses would incorrectly read in the 'Tie cells' option
+and could change 'Affected' to 'Unaffected' which would cause a re-run analysis to appear to change.
+
+1.2.0 2008-05-19
+Added new chart types showing attribute interactions.
+  Renamed the 'Dendrogram' results tab to 'Entropy' so all chart types are available under 'Entropy' 
+

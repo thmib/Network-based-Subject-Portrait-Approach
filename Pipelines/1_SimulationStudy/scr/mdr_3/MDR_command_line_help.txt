@@ -1,0 +1,171 @@
+Usage of Multifactor Dimensionality Reduction (MDR) jar file:
+
+java -jar mdr.jar
+  (GUI mode) (can also just double-click on many systems) 
+
+java -Xmx1000m -jar mdr.jar ...
+  (can optionally specify how much memory to allocate) 
+
+java -jar mdr.jar -help
+  (Display this message)
+
+java -jar mdr.jar -version
+  (Display version information)
+
+java -jar mdr.jar [analysis options] <datafile>
+  (Batch mode analysis)
+
+java -jar mdr.jar [filter options] <datafile> <outputfile>
+  (Batch mode filter)
+
+Example of a batch run generating a tab delimited table of summary results:
+java -jar mdr.jar -min=1 -max=2 -cv=10 -table_data=true -minimal_output=true MDR-SampleData.txt
+
+Analysis Options:
+
+-cv=<int>
+	default: 10
+	Cross-validation count. Determines partitioning of the data into multiple overlapping datasets which can be used to check against over-fitting. Setting to 1 disables cross-validation.
+-min=<int>
+	default: 1
+	The minimum number of attributes considered together. Referred to in UI under 'Attribute Count Range'.
+-max=<int>
+	default: 3
+	The maximum number of attributes considered together. Referred to in UI under 'Attribute Count Range'.
+-nolandscape
+	default: this is not a boolean and takes no argument -- if present then true
+	This will stop the output of the fitness of every attribute combination looked at. This will signifigantly reduce the size of your output.
+-top_models_landscape_size
+	default: 500
+	Minimum of 1. This will keep track of this number of the best models for each level.
+-filter_file=<path to file of attribute names>
+If present, only those attributes in this file will be read in from disk to create a filtered dataset.
+-parallel
+	default: this is not a boolean and takes no argument -- if present then true
+	If present, program will make best use of multiple processors/cores.
+-forced_search=<comma-separated attribute list or attribute names or zero-based indices>
+	default: exhaustive search
+	Changes search from exhaustive testing of all attribute combinations to only test the combination specified with this option.  Can also include one or more asterisks to exhaustively searchforced attributes on additional levels
+-random_search_eval=<int>
+	default: exhaustive search
+	Changes search from exhaustive testing of all attribute combinations to instead test the passed in number of random combinations of attributes. There is nothing to prevent the same combination from being repeatedly tested.
+-random_search_runtime=<double><s|m|h|d>
+	default: exhaustive search
+	changes search from exhaustive testing of all attribute combinations to instead test the passed random combinations of attributes for a specified time such as 30m (30 minutes) or 1h (1 hour). There is nothing to prevent the same combination from being repeatedly tested.
+-adjust_for_covariate=<attributeName>
+	default: not used
+	If specified, the dataset will be modified to remove all main effects attributable to the passed in attribute.
+-seed=<long>
+	default: 0
+	This number will be used to seed the random number generator. This is used to partition the datasets when using cross validation. Varying this number will change the cross validation results slightly. It is also used more extensively for types of searches that involve probabilities or random choices such as EDA and Random.
+-tie=<AFFECTED|UNAFFECTED|UNCLASSIFIED>
+	default: AFFECTED
+	If the case and control counts are equal for an attribute combination cell, the status of that cell will be as specified here.
+-saveanalysis=<filename>
+	default: analysis not saved by default
+	name of file to save MDR Gui compatible analysis file.
+-minimal_output=<boolean>
+	default: false
+	This will output only the best attribute combination for each level, skipping all other normal information such as cross-validation, etcetera.
+-matched
+	default: this is not a boolean and takes no argument -- if present then true
+	This alters the way data sets are partitioned to make sure matched rows (either pairs or triplets) always end up in the same cross-validation interval. Also affects permutation.
+-permutations=<int>
+	default: 0	If non-zero the mdr status column will be shuffled and mdr run a number of times. The probability of the observed mdr model testing accuracy and cv will be output.
+-permutation_start_index=<int>
+	default: 0	Useful when you want to reproduce permutation results. This will advance the random number generator so that the first permutation will be identical to the permutation #(permutationStartIndex+1).
+-permute_with_explicit_test_of_interaction=<boolean>
+	default: false
+	Variant of permutation testing that keeps main affects while permuting attribute interactions
+-lack_of_coverage_penalty_exponent=float
+	default: 0.5
+	When rows cannot be classified, decrease score using this value. Formula is (ba - 0.5)*POW(coverage,exponent) + 0.5.
+-fitness_criteria_order_top_models=<MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_TRAINING-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_ADJUSTED_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_TESTING-MODEL_TRAINING-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_TRAINING-MODEL_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES|COVERAGE-MODEL_TRAINING-MODEL_OVERALL-MODEL_ATTRIBUTES|COVERAGE-MODEL_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES>
+	default: MODEL_OVERALL-MODEL_ATTRIBUTES	Determines the metrics and the order they are applied for top models.
+-fitness_criteria_order_best_model=<CVC-MODEL_WINNERS_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES|CVC-CV_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES|CVC-MODEL_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES|CVC-MODEL_TRAINING-MODEL_OVERALL-MODEL_ATTRIBUTES|CV_TESTING-CVC-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_TRAINING-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_ADJUSTED_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_TESTING-CVC-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_TESTING-MODEL_TRAINING-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_TRAINING-MODEL_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES>
+	default: CVC-MODEL_WINNERS_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES	Determines the metrics and the order they are to choose the best model from the top models.
+-fitness_criteria_order_across_levels=<CVC-MODEL_WINNERS_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES|CVC-CV_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES|CVC-MODEL_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES|CVC-MODEL_TRAINING-MODEL_OVERALL-MODEL_ATTRIBUTES|CV_TESTING-CVC-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_TRAINING-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_ADJUSTED_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_TESTING-CVC-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_TESTING-MODEL_TRAINING-MODEL_OVERALL-MODEL_ATTRIBUTES|MODEL_TRAINING-MODEL_TESTING-MODEL_OVERALL-MODEL_ATTRIBUTES>
+	default: CV_TESTING-CVC-MODEL_OVERALL-MODEL_ATTRIBUTES	Determines the overall best model across levels
+-print_detailed_confusion_matrix=<boolean>
+	default: false
+	When printing table_data print entire confusion matrix, TP, FP, TN, FN and # of unclassified rows.
+-discrete_significance_metric=<BALANCED_ACCURACY|LEAVE_ONE_OUT_CROSS_VALIDATION_TESTING|MAXIMUM_LIKELIHOOD|FISHERS_EXACT_MULTIPLY|CHI_SQUARED|BALANCED_ACCURACY_WEIGHTED_BY_FISHERS_EXACT>
+	default: BALANCED_ACCURACY	EXPERIMENTAL: For discrete endpoints, what metric to use to evaluate model.
+-continuous_significance_metric=<TTEST|ANOVA>
+	default: TTEST	EXPERIMENTAL: For continuous endpoints, what metric to use to evaluate model.
+-missing_code=<String>
+	default: 	EXPERIMENTAL: What string should be interpreted as missing data. Models with missing data will be considered UNASSIGNED and a coverage penalty applied (coverage penalty not implemented for continuous endpoints). Note: the default is an empty cell.
+-distributed_node_count=<Integer>
+	default: 1	If greater than 1, attribute combinations will be split into the specified number of subsets. Which subset mdr looks at is determined by distributed_node_number. This number must be evenly divisible by the -cv parameter. This can be used as a primitive form of parallelization where multiple mdr instances (perhaps on a cluster) process a subset of the data. It will be up to the user to collate the results.
+-distributed_node_number=<Integer>
+	default: 1	Only relevant if distributed_node_count is greater than 1. This will determine which subset of the attribute combinations the current instance of mdr will examine.
+-eda_search_numAgents=<int>
+	default: 100
+	number of MDR models (attribute combinations) evaluated in each generation
+-eda_search_numUpdates=<int>
+	default: 100
+	number of generations
+-eda_search_retention=<double>
+	default: 0.5
+	determines how much weight information from previous iterations is given relative to information gained in the most recent iteration
+-eda_search_alpha=<int>
+	default: 1
+	the relative weight given to the current generations MDR score (balanced accuracy).
+-eda_search_beta=<int>
+	default: 1
+	the relative weight given to the expert knowledge score of an attribute.
+-eda_search_expertKnowledge=<filename>
+	default: no file read in by default
+	format is one row per attribute with two tab-delimited columns: attribute name and floating point number as weight. Higher numbers are considered better.
+-eda_search_weighting_method=<PROPORTIONAL|RANK>
+	default: PROPORTIONAL
+	
+-eda_search_theta=<double>
+	default: 0.85
+	
+-eda_search_percentMaxAttributeRange=<0-100>
+	default: 100.0
+	
+-table_data=<either 'true' or else comma delimited name=value pairs>
+	If this is present the format of the output data is changed into a tab-delimited table format with each attribute level result generating only one row/line. It is useful when doing many runs with different parameters. You add the parameters that can vary and their value for the current run and these will shown in their own columns.
+-fishers_threshold=<float>
+	default: 1.0
+	If not Double.NaN this alters how MDR determines how ties are determined when determining the classification for an attribute combination. Instead of looking only to see if case and control are equal, this uses the Fisher's Exact Test to determine if the two numbers differ significantly. If the Fisher's two tailed result is greater than or equal to the passed in number the differences are considered significant, else considered a tie and the cell is classified according to tie priority.
+-all_models_outfile=<filename>
+	default: <none>	If present, all model results will be output as they are calculated. This is better than landscape which does not output until the end and may fail due to running out of memory.
+-output_two_way_entropy
+	default: NOT PRESENT. If present this must be one of the values: MDR_ATTRIBUTE|CARTESIAN_PRODUCT
+	This will cause entropy to be computed for every attribute and every attribute combination
+-top_models_predictions_file=<String>
+	default: NOT PRESENT.
+	If present this a tab delimited table will be written to the file specified which hava column for every top model and a row fr every sample. Each cell will be 1 if the model correctly predicted the class else zero.
+
+Filter Options:
+
+-chisq_pvalue
+	default: this is not a boolean and takes no argument -- if present then true
+	if present then uses chi squared p-value, else it uses the chi squared value.
+-filter=One of these choices: <RELIEFF|TURF|ATTRIBUTE_FILE|CHISQUARED|ODDSRATIO|SURF|SURFNTURF|SURFSTAR|SURFSTARNTURF|MULTISURF|MULTISURFNTURF>
+	default: no default - if not specified then must not be doing a filter
+	specifies which measure used to filter data.
+To save the filtered dataset, include the name of the output file as your final argument.
+-filter_file=<path to file of attribute names>: >
+	default: no default - filter dataset to only the included columns. Used in with -filter=ATTRIBUTE_FILE
+-parallel
+	default: this is not a boolean and takes no argument -- if present then true
+	If present, program will make best use of multiple processors/cores.
+-seed=<long>
+	default: 0
+	This number will be used to seed the random number generator. This is used to pick random samples if relieff_samplesize less than entire dataset.
+-relieff_neighbors=<int>
+	default: 10 or number of datarows if smaller
+	number of instances with most similar attributes used in calculating score
+-relieff_samplesize=<int>
+	default: <entire dataset>
+	number of instances used in calculating scores. Recommended to use all.
+-select_<N | PCT | THRESH>=<value>
+	N selects a set number of top attributes based on score, percent selects a percentage of top attributes, threshold selects ones with a score above a specified value.
+-turf_pct=<float>
+	default: 0.1
+	Number between 0 and 1 which represents fraction of attributes removed in each TuRF iteration.
+
