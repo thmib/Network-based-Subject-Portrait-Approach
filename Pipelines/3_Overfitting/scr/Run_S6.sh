@@ -1,0 +1,2 @@
+bash Run_S6_MachineLearningAnalysisForLCs_B1.sh
+bash Run_S6_MachineLearningAnalysisForLCs_B2.sh
