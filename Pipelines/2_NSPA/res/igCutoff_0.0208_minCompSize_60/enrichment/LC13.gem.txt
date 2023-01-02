@@ -1,0 +1,2 @@
+GO.ID	Description	p.Val	FDR	Phenotype	Genes
+CORUM:2513	N-WASp homomer complex	0.04998662857685543	0.04998662857685543	+1	RS17701547
